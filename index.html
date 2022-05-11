@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Reckless Robots Reflections</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+</head>
+<body>
+    <h1 class="Title"> Reckless Robots Reflections </h1>
+
+    <button id="connectWallet" class="connectWallet" onclick="connectWallet()"> Connect Wallet </button>
+
+
+    <div id="parent" class="parent">
+        <div id="buttons" class="buttons">
+            <button id="pMintTab" class="pMintTab" onclick="onClick(1)"> Royalties </button>
+            <button id="hMintTab" class="hMintTab" onclick="onClick(2)"> Reflections </button>
+        </div>
+
+        <div id="pMintPanel" class="pMintPanel">
+            <button id="publicMintButton" class="publicMintButton" onclick="distributeRoyalties()"> Confirm </button>
+        </div>
+
+        <div id="hMintPanel" class="hMintPanel">
+            <button id="holderMintButton" class="holderMintButton" onclick="sendReflections()"> Confirm </button>
+        </div>
+
+    </div>
+
+    <style>
+
+        body{
+            background: linear-gradient(to right, #aa076b , #61045f);
+        }
+
+        h1.Title{
+            font: 700;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-size: 2em;
+            color: white;
+
+            text-align: center;
+            position: absolute;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+            width: 30%;
+            height: 7%;
+            left: 35%;
+            
+            border-radius: 15px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: white;
+
+            background: linear-gradient(to right, #A230ED, #3E00B3);
+        } 
+
+        div.parent{
+            position: absolute;
+            display: flex;
+            align-items: center;
+            align-self: center;
+            justify-content: center;
+            direction: column;
+            width: 50%;
+            height: 70%;
+            left: 25%;
+            top: 20%;
+            border-color: white;
+            visibility: hidden;
+
+			border-radius: 15px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: white;
+
+            background: rgb(170, 66, 255);
+        }
+
+        div.buttons{
+            position: inherit;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: space-evenly;
+            width: 80%;
+            height: 20%;
+            top: 5%;
+        }
+
+        button.pMintTab{
+            font-size: 1.5em;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-weight: 700;
+            color: white;
+
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+
+            width: 30%;
+            height: 50%;
+            top: 5%;
+            left: 17.5%;
+
+            border-radius: 15px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: white;
+
+            background: linear-gradient(to right, #A230ED, #3E00B3);
+        }
+
+        button.hMintTab{
+            font-size: 1.5em;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-weight: 700;
+            color: white;
+
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+
+            width: 30%;
+            height: 50%;
+            right: 17.5%;
+            top: 5%;
+
+            border-radius: 15px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: white;
+
+            background: linear-gradient(to right, #A230ED, #3E00B3);
+        }
+
+        div.pMintPanel{
+            position: inherit;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+            direction: column;
+
+            width: 70%;
+            height: 70%;
+            top: 22.5%;
+
+            visibility: hidden;
+        }
+
+        div.mintInfo{
+            font-size: 3em;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-weight: 700;
+            color: white;
+
+            position: inherit;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+            direction: column;
+
+            border-radius: 15px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: white;
+
+            width: 60%;
+            height: 15%;
+            top: 35%;
+
+			visibility: hidden;
+
+            background: linear-gradient(to right, #A230ED, #3E00B3);
+        }
+
+        button.dQuantity{
+            font-size: 1em;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-weight: 700;
+            text-align: center;
+            color: black;
+
+            position: inherit;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            
+            border-radius: 150px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: black;
+
+            width: 10%;
+            height: 50%;
+            left: 2.5%;
+            top: 25%;
+        }
+
+        button.iQuantity{
+            font-size: 1em;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-weight: 700;
+            text-align: center;
+            color: black;
+
+            position: inherit;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            
+            border-radius: 150px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: black;
+
+            width: 10%;
+            height: 50%;
+            right: 2.5%;
+            top: 25%;
+        }
+
+        h1.mintInfoText{
+            font-size: 0.5em;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-weight: 500;
+            color: white;
+
+            position: inherit;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+            direction: column;
+        }
+
+        button.publicMintButton{
+            font-size: 3em;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-weight: 700;
+            color: white;
+
+            position: inherit;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+            direction: column;
+
+            border-radius: 15px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: white;
+
+            width: 45%;
+            height: 20%;
+            top: 52.5%;
+
+            background: linear-gradient(to right, #A230ED, #3E00B3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button.publicMintButton::after{
+            content: "";
+            position: absolute;
+            top: -2%;
+            background-image: linear-gradient(to right, rgb(140, 0, 255), rgb(140, 0, 255));
+            transition: transform 0.5s;
+
+            box-shadow: 0px 10px rgb(190, 66, 252);
+        }
+
+        button.publicMintButton:hover{
+            transform: translate(0, -5%);
+            background-image: linear-gradient(to right, rgb(140, 0, 255), rgb(140, 0, 255));
+            box-shadow: 0px 10px rgb(190, 66, 252);
+        }
+
+        div.hMintPanel{
+            position: inherit;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+            direction: column;
+
+            width: 70%;
+            height: 70%;
+            top: 22.5%;
+            
+            visibility: hidden;
+        }
+
+        button.holderMintButton{
+            font-size: 3em;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-weight: 700;
+            color: white;
+
+            position: inherit;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+            direction: column;
+
+            border-radius: 15px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: white;
+
+            width: 45%;
+            height: 20%;
+            top: 52.5%;
+
+            background: linear-gradient(to right, #A230ED, #3E00B3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button.holderMintButton::after{
+            content: "";
+            position: absolute;
+            top: -2%;
+            background-color: greenyellow;
+            background-image: linear-gradient(to right, rgb(140, 0, 255), rgb(140, 0, 255));
+            transition: transform 0.5s;
+
+            box-shadow: 0px 10px rgb(190, 66, 252);
+        }
+
+        button.holderMintButton:hover{
+            transform: translate(0, -5%);
+            background-image: linear-gradient(to right, rgb(140, 0, 255), rgb(140, 0, 255));
+            box-shadow: 0px 10px rgb(190, 66, 252);
+        }
+
+
+        button.connectWallet{
+            position: absolute;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+            width: 30%;
+            height: 7.5%;
+            top: 45%;
+            left: 35%;
+
+            border-radius: 15px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: white;
+            background: linear-gradient(to right, #A230ED, #3E00B3);
+
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-size: 2em;
+            font-weight: 700;
+            text-align: center;
+            color: white;
+
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button.connectWallet::after{
+            content: "";
+            position: absolute;
+            top: -2%;
+            background-image: linear-gradient(to right, rgb(140, 0, 255), rgb(140, 0, 255));
+            transition: transform 0.5s;
+
+            box-shadow: 0px 10px rgb(190, 66, 252);
+        }
+
+        button.connectWallet:hover{
+            transform: translate(0, -5%);
+            background-image: linear-gradient(to right, rgb(140, 0, 255), rgb(140, 0, 255));
+            box-shadow: 0px 10px rgb(190, 66, 252);
+        }
+
+        p.mintedMessage{
+            font-size: 3em;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-weight: 700;
+			text-align: center;
+            color: white;
+
+            position: inherit;
+            display: flex;
+            align-self: center;
+            align-items: center;
+            justify-content: center;
+            direction: column;
+
+            width: 100%;
+            height: 10%;
+            top: 77.5%;
+        }
+
+		
+    </style>
+
+
+
+<script type="text/javascript">
+
+    var ref1 = null;
+	const abi1 = [
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "distributeReflections",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "oldContract",
+		"outputs": [
+			{
+				"internalType": "contract RecklessRobots",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
+	const ref1Address = "0x32D197ECf65C3Bed627695a7dc3613957125720c";
+
+	var ref2 = null;
+	const abi2 = [
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "distributeReflections",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "oldContract",
+		"outputs": [
+			{
+				"internalType": "contract RecklessRobots",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
+	const ref2Address = "0xF27160a4D446289Fb05066a3A295b647D57b78A7";
+
+	var ref3 = null;
+	const abi3 = [
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "distributeReflections",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "oldContract",
+		"outputs": [
+			{
+				"internalType": "contract RecklessRobots",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
+	const ref3Address = "0xF049aAd168A28b1E41cd0A08D65bfD869fB24b94";
+
+	var ref4 = null;
+	const abi4 = [
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "distributeReflections",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "oldContract",
+		"outputs": [
+			{
+				"internalType": "contract RecklessRobots",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
+	const ref4Address = "0xf18Ee05D2D48aD413B168695128EEED36e7B6f4D";
+
+	var ref5 = null;
+	const abi5 = [
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "distributeReflections",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "oldContract",
+		"outputs": [
+			{
+				"internalType": "contract RecklessRobots",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
+	const ref5Address = "0x8d39C3Ce0Ac70f2D030Aa26e22919Aa401E1C039";
+
+	var mainContract = null;
+	const mainABi = [
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "divideRoyalties",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "eliminateAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "oldContract",
+		"outputs": [
+			{
+				"internalType": "contract RecklessRobots",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "teamAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
+	const mainAddress = "0x63131F3822AC976b393f15770BfB38266Fdb9970";
+
+    var oldContract = null;
+    const oldABI = [
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_memberships",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_artist",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "approved",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Approval",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "ApprovalForAll",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "Paused",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "Unpaused",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "_tokenIdCounter",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "_addresses",
+				"type": "address[]"
+			}
+		],
+		"name": "addWhiteList",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "addWhitelistAddress",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "artist",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "canMint",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "getApproved",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getInfo",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "regularCost",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "memberCost",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "whitelistCost",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxSupply",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalSupply",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxMintPerAddress",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxMintPerTx",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct IDrop.Info",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getLen",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			}
+		],
+		"name": "isApprovedForAll",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "isMember",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "isWhiteList",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "maxSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "memberships",
+		"outputs": [
+			{
+				"internalType": "contract ERC1155",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "mint",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_minter",
+				"type": "address"
+			}
+		],
+		"name": "mintCost",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "ownerOf",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "pause",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "paused",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "dest",
+				"type": "address"
+			}
+		],
+		"name": "payments",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "removeWhiteList",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "safeTransferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_data",
+				"type": "bytes"
+			}
+		],
+		"name": "safeTransferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "setApprovalForAll",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_baseURI",
+				"type": "string"
+			}
+		],
+		"name": "setBaseURI",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_lootContract",
+				"type": "address"
+			}
+		],
+		"name": "setLootContractAddress",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_cost",
+				"type": "uint256"
+			}
+		],
+		"name": "setMemberCost",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_cost",
+				"type": "uint256"
+			}
+		],
+		"name": "setRegularCost",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint8",
+				"name": "_chunkIndex",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint16[]",
+				"name": "_chunk",
+				"type": "uint16[]"
+			}
+		],
+		"name": "setSequnceChunk",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_cost",
+				"type": "uint256"
+			}
+		],
+		"name": "setWhitelistCost",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes4",
+				"name": "interfaceId",
+				"type": "bytes4"
+			}
+		],
+		"name": "supportsInterface",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "index",
+				"type": "uint256"
+			}
+		],
+		"name": "tokenByIndex",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "index",
+				"type": "uint256"
+			}
+		],
+		"name": "tokenOfOwnerByIndex",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "tokenURI",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "unpause",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "payee",
+				"type": "address"
+			}
+		],
+		"name": "withdrawPayments",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
+    const oldAdd = "0xD56AFcdB787e233325757D3ED7A987F11FB3fa08";
+
+    var account = null;
+
+
+    async function connectWallet(){
+        if(window.ethereum){
+            await window.ethereum.send('eth_requestAccounts');
+            window.web3 = new Web3(window.ethereum);
+
+            var accounts = await web3.eth.getAccounts();
+            account = accounts[0];
+
+            ref1 = new web3.eth.Contract(abi1, ref1Address);
+			ref2 = new web3.eth.Contract(abi2, ref2Address);
+			ref3 = new web3.eth.Contract(abi3, ref3Address);
+			ref4 = new web3.eth.Contract(abi4, ref4Address);
+			ref5 = new web3.eth.Contract(abi5, ref5Address);
+
+			mainContract = new web3.eth.Contract(mainABi, mainAddress);
+            oldContract = new web3.eth.Contract(oldABI, oldAdd);
+            openPanel();
+        }
+    }
+
+    async function openPublicPanel(){
+        document.getElementById("pMintPanel").style.visibility = "visible";
+        document.getElementById("hMintPanel").style.visibility = "hidden";
+    }
+
+    async function openHolderPanel(){
+        document.getElementById("pMintPanel").style.visibility = "hidden";
+        document.getElementById("hMintPanel").style.visibility = "visible";
+    }
+
+    async function setTabs(){
+        var paused = await contractIsPaused();
+        var isPub = await isPublic();
+        var isHolder = await isHolderSale();
+
+        if(paused){
+            document.getElementById("pMintTab").disabled = true;
+            document.getElementById("pMintTab").style.opacity = 0.5;
+            document.getElementById("hMintTab").disabled = true;
+            document.getElementById("hMintTab").style.opacity = 0.5;
+            return;
+        }
+        if(!isPub){
+            document.getElementById("pMintTab").disabled = true;
+            document.getElementById("pMintTab").style.opacity = 0.5;
+        }
+        if(!isHolder){
+            document.getElementById("hMintTab").disabled = true;
+            document.getElementById("hMintTab").style.opacity = 0.5;
+        }
+    }
+
+    async function distributeRoyalties(){
+        mainContract.methods.divideRoyalties().send({from: account});
+    }
+
+    async function sendReflections(){
+        for(var  i = 0; i < 5; i++){
+			ref1.methods.distributeReflections().send({from: account});
+			ref2.methods.distributeReflections().send({from: account});
+			ref3.methods.distributeReflections().send({from: account});
+			ref4.methods.distributeReflections().send({from: account});
+			ref5.methods.distributeReflections().send({from: account});
+		}
+    }
+
+    async function onClick(num){
+        switch(num){
+            case 1:
+            document.getElementById("pMintTab").style.transform = "translate(0, -5%)";
+            document.getElementById("pMintTab").style.transition = "0.3s ease, box-shadow 0.3s ease";
+            document.getElementById("pMintTab").style.backgroundImage = "linear-gradient(to right, rgb(140, 0, 255), rgb(140, 0, 255))";
+            document.getElementById("pMintTab").style.boxShadow = "0px 10px rgb(190, 66, 252)";
+
+            document.getElementById("hMintTab").style.transform = "translate(0, 0%)";
+            document.getElementById("hMintTab").style.transition = "0.3s ease, box-shadow 0.3s ease";
+            document.getElementById("hMintTab").style.backgroundImage = "linear-gradient(to right, #A230ED, #3E00B3)";
+            document.getElementById("hMintTab").style.boxShadow = "0px 0px rgb(190, 66, 252)";
+
+            openPublicPanel();
+            break;
+
+            case 2:
+            document.getElementById("pMintTab").style.transform = "translate(0, 0%)";
+            document.getElementById("pMintTab").style.transition = "0.3s ease, box-shadow 0.3s ease";
+            document.getElementById("pMintTab").style.backgroundImage = "linear-gradient(to right, #A230ED, #3E00B3)";
+            document.getElementById("pMintTab").style.boxShadow = "0px 0px rgb(190, 66, 252)";
+
+            document.getElementById("hMintTab").style.transform = "translate(0, -5%)";
+            document.getElementById("hMintTab").style.transition = "0.3s ease, box-shadow 0.3s ease";
+            document.getElementById("hMintTab").style.backgroundImage = "linear-gradient(to right, rgb(140, 0, 255), rgb(140, 0, 255))";
+            document.getElementById("hMintTab").style.boxShadow = "0px 10px rgb(190, 66, 252)";
+
+            openHolderPanel();
+            break;
+        }
+    }
+
+
+
+    async function openPanel(){
+        document.getElementById("connectWallet").style.visibility = "hidden";
+        document.getElementById("parent").style.visibility = "visible";
+        changeCostText();
+        await setTabs();
+        await setMintedText();
+    }
+</script>
+</body>
+</html>
